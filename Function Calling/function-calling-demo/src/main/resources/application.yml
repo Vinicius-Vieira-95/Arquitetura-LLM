@@ -1,0 +1,24 @@
+server:
+  port: 8080
+
+llm:
+  # Provedor do modelo: "mock" (autocontido, sem chave) ou "anthropic" (API real).
+  provider: ${LLM_PROVIDER:mock}
+  # Limite de idas ao modelo por conversa (protege contra loops).
+  max-iterations: 5
+
+anthropic:
+  # Chave lida da variavel de ambiente ANTHROPIC_API_KEY (nao versione a chave!).
+  api-key: ${ANTHROPIC_API_KEY:}
+  model: ${ANTHROPIC_MODEL:claude-sonnet-5}
+  max-tokens: 1024
+  base-url: https://api.anthropic.com
+  version: "2023-06-01"
+
+demo:
+  # Se true, roda exemplos no console durante o startup.
+  run-on-startup: ${DEMO_RUN:false}
+
+logging:
+  level:
+    br.uece.functioncalling: INFO

@@ -1,0 +1,24 @@
+server:
+  port: 8080
+
+anthropic:
+  # Lida da variavel de ambiente ANTHROPIC_API_KEY. Nao comite a chave no codigo.
+  api-key: ${ANTHROPIC_API_KEY:}
+  model: claude-haiku-4-5        # troque por claude-sonnet-4-6 para respostas mais ricas
+  base-url: https://api.anthropic.com/v1/messages
+  version: "2023-06-01"
+  max-tokens: 1024
+
+rag:
+  top-k: 5                       # quantos chunks recuperar por pergunta
+  chunk-max-chars: 600           # tamanho-alvo de cada chunk (em caracteres)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info   # por padrao so "health" fica exposto
+
+logging:
+  level:
+    com.example.ragdemo: INFO
