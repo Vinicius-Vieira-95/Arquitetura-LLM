@@ -3,6 +3,8 @@ package com.example.ragdemo.ingest;
 import com.example.ragdemo.embedding.Embedder;
 import com.example.ragdemo.store.Chunk;
 import com.example.ragdemo.store.InMemoryVectorStore;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -15,6 +17,7 @@ import org.springframework.util.StreamUtils;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Fase de INDEXACAO (offline) do RAG, executada uma vez no startup:
@@ -50,10 +53,7 @@ public class CorpusIndexer {
         List<Chunk> chunks = new ArrayList<>();
         for (Resource doc : docs) {
             String source = doc.getFilename();
-            String content;
-            try (var in = doc.getInputStream()) {
-                content = StreamUtils.copyToString(in, StandardCharsets.UTF_8);
-            }
+            String content = extractText(doc, source);
             chunks.addAll(chunker.chunk(source, content));
         }
 
@@ -73,5 +73,18 @@ public class CorpusIndexer {
 
         log.info("Indexacao concluida: {} documentos, {} chunks, dimensao do vetor = {}.",
                 docs.length, vectorStore.size(), embedder.dimension());
+    }
+
+    /** Extrai texto plano do documento; PDFs usam PDFBox, os demais formatos sao lidos como UTF-8. */
+    private String extractText(Resource doc, String source) throws Exception {
+        boolean isPdf = source != null && source.toLowerCase(Locale.ROOT).endsWith(".pdf");
+        try (var in = doc.getInputStream()) {
+            if (isPdf) {
+                try (var pdf = Loader.loadPDF(in.readAllBytes())) {
+                    return new PDFTextStripper().getText(pdf);
+                }
+            }
+            return StreamUtils.copyToString(in, StandardCharsets.UTF_8);
+        }
     }
 }

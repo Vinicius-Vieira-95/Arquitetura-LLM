@@ -13,8 +13,8 @@ public class OpenApiConfig {
     public OpenAPI ragOpenApi() {
         return new OpenAPI().info(new Info()
                 .title("RAG Spring Demo")
-                .description("Mini RAG em Spring Boot: chunking, embeddings, busca por similaridade "
-                        + "e geracao via Anthropic API.")
-                .version("v0.0.1"));
+                .description("Mini RAG em Spring Boot para consulta as regras do Edital do Vestibular "
+                        + "da UECE: chunking, embeddings, busca por similaridade e geracao via Anthropic API.")
+                .version("v0.0.2"));
     }
 }
