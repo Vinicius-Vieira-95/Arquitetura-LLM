@@ -1,5 +1,7 @@
 server:
-  port: 8080
+  # Configuravel para permitir rodar as 3 demos do repositorio simultaneamente
+  # (cada uma em uma porta), por exemplo para o harness de comparacao em benchmark/.
+  port: ${SERVER_PORT:8080}
 
 llm:
   # Provedor do modelo: "mock" (autocontido, sem chave) ou "anthropic" (API real).
@@ -18,6 +20,12 @@ anthropic:
 demo:
   # Se true, roda exemplos no console durante o startup.
   run-on-startup: ${DEMO_RUN:false}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info   # por padrao so "health" fica exposto
 
 logging:
   level:

@@ -118,6 +118,35 @@ Outras perguntas de exemplo:
 | `anthropic.api-key` | `ANTHROPIC_API_KEY` | — | Chave da API (não versione!) |
 | `anthropic.model` | `ANTHROPIC_MODEL` | `claude-sonnet-5` | Modelo usado |
 | `demo.run-on-startup` | `DEMO_RUN` | `false` | Roda exemplos no console |
+| `server.port` | `SERVER_PORT` | `8080` | Porta HTTP (util para rodar as 3 demos do repo ao mesmo tempo) |
+
+---
+
+## Observabilidade
+
+Com o Actuator, a aplicacao expoe:
+
+- `GET /actuator/health` — saude da aplicacao;
+- `GET /actuator/metrics` — lista de metricas disponiveis;
+- `GET /actuator/metrics/{nome}` — detalhe de uma metrica, ex.: `functioncalling.chat`.
+
+Metricas publicadas pelo `ChatService` (via Micrometer):
+
+| Metrica | Tipo | Tags | O que mede |
+|---------|------|------|------------|
+| `functioncalling.chat` | timer | `outcome` (`success`/`iteration_limit`/`error`) | Duracao do ciclo completo de `chat()` |
+| `functioncalling.tool` | timer | `tool`, `outcome` | Duracao de cada execucao de ferramenta |
+| `functioncalling.iterations` | summary | — | Distribuicao do numero de idas ao modelo por conversa |
+| `functioncalling.errors` | counter | — | Excecoes nao tratadas durante o ciclo |
+
+---
+
+## Comparando com o projeto irmao (react-agent)
+
+Ha um harness em `../benchmark/compare-patterns.ps1` que roda o mesmo conjunto
+de perguntas contra este projeto e o `react-agent`, comparando latencia e
+numero de iteracoes lado a lado — util para o capitulo de resultados do TCC.
+Veja `../benchmark/README.md`.
 
 ---
 

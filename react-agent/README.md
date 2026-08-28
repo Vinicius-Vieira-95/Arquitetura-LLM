@@ -141,6 +141,35 @@ Outras perguntas de exemplo:
 | `anthropic.api-key` | `ANTHROPIC_API_KEY` | — | Chave da API (não versione!) |
 | `anthropic.model` | `ANTHROPIC_MODEL` | `claude-sonnet-5` | Modelo usado |
 | `demo.run-on-startup` | `DEMO_RUN` | `false` | Roda exemplos no console |
+| `server.port` | `SERVER_PORT` | `8080` | Porta HTTP (util para rodar as 3 demos do repo ao mesmo tempo) |
+
+---
+
+## Observabilidade
+
+Com o Actuator, a aplicacao expoe:
+
+- `GET /actuator/health` — saude da aplicacao;
+- `GET /actuator/metrics` — lista de metricas disponiveis;
+- `GET /actuator/metrics/{nome}` — detalhe de uma metrica, ex.: `react.run`.
+
+Metricas publicadas pelo `ReActAgentService` (via Micrometer):
+
+| Metrica | Tipo | Tags | O que mede |
+|---------|------|------|------------|
+| `react.run` | timer | `outcome` (`success`/`iteration_limit`/`error`) | Duracao do ciclo completo de `run()` |
+| `react.tool` | timer | `tool`, `outcome` | Duracao de cada execucao de ferramenta |
+| `react.iterations` | summary | — | Distribuicao do numero de idas ao modelo por pergunta |
+| `react.errors` | counter | — | Excecoes nao tratadas durante o ciclo |
+
+---
+
+## Comparando com o projeto irmao (function-calling-demo)
+
+Ha um harness em `../benchmark/compare-patterns.ps1` que roda o mesmo conjunto
+de perguntas contra este projeto e o `function-calling-demo`, comparando
+latencia e numero de iteracoes lado a lado — util para o capitulo de
+resultados do TCC. Veja `../benchmark/README.md`.
 
 ---
 

@@ -1,5 +1,7 @@
 server:
-  port: 8080
+  # Configuravel para permitir rodar as 3 demos do repositorio simultaneamente
+  # (cada uma em uma porta), por exemplo para o harness de comparacao em benchmark/.
+  port: ${SERVER_PORT:8080}
 
 anthropic:
   # Lida da variavel de ambiente ANTHROPIC_API_KEY. Nao comite a chave no codigo.

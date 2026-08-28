@@ -7,6 +7,7 @@ import br.uece.functioncalling.tool.CalculatorTool;
 import br.uece.functioncalling.tool.CurrencyTool;
 import br.uece.functioncalling.tool.ToolRegistry;
 import br.uece.functioncalling.tool.WeatherTool;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ class ChatServiceTest {
     void setUp() {
         ToolRegistry registry = new ToolRegistry(
                 List.of(new WeatherTool(), new CalculatorTool(), new CurrencyTool()));
-        chatService = new ChatService(new MockLlmClient(), registry, 5);
+        chatService = new ChatService(new MockLlmClient(), registry, new SimpleMeterRegistry(), 5);
     }
 
     @Test

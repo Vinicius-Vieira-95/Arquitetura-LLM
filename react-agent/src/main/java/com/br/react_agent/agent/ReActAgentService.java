@@ -2,6 +2,8 @@ package com.br.react_agent.agent;
 
 import com.br.react_agent.llm.LlmClient;
 import com.br.react_agent.tool.ToolRegistry;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -69,55 +71,76 @@ public class ReActAgentService {
 
     private final LlmClient llmClient;
     private final ToolRegistry toolRegistry;
+    private final MeterRegistry meterRegistry;
     private final int maxIterations;
 
     public ReActAgentService(
             LlmClient llmClient,
             ToolRegistry toolRegistry,
+            MeterRegistry meterRegistry,
             @Value("${react.max-iterations:5}") int maxIterations) {
         this.llmClient = llmClient;
         this.toolRegistry = toolRegistry;
+        this.meterRegistry = meterRegistry;
         this.maxIterations = maxIterations;
     }
 
     public AgentResult run(String question) {
-        StringBuilder scratchpad = new StringBuilder();
-        List<AgentStep> steps = new ArrayList<>();
+        Timer.Sample totalSample = Timer.start(meterRegistry);
+        String outcome = "success";
+        try {
+            StringBuilder scratchpad = new StringBuilder();
+            List<AgentStep> steps = new ArrayList<>();
 
-        for (int iteration = 1; iteration <= maxIterations; iteration++) {
-            String prompt = buildPrompt(question, scratchpad.toString());
-            String completion = llmClient.complete(prompt, List.of(STOP_SEQUENCE)).stripTrailing();
+            for (int iteration = 1; iteration <= maxIterations; iteration++) {
+                String prompt = buildPrompt(question, scratchpad.toString());
+                String completion = llmClient.complete(prompt, List.of(STOP_SEQUENCE)).stripTrailing();
 
-            int finalAnswerIdx = completion.indexOf(FINAL_ANSWER_MARKER);
-            if (finalAnswerIdx >= 0) {
-                String answer = completion.substring(finalAnswerIdx + FINAL_ANSWER_MARKER.length()).trim();
-                return new AgentResult(answer, steps, iteration);
+                int finalAnswerIdx = completion.indexOf(FINAL_ANSWER_MARKER);
+                if (finalAnswerIdx >= 0) {
+                    String answer = completion.substring(finalAnswerIdx + FINAL_ANSWER_MARKER.length()).trim();
+                    meterRegistry.summary("react.iterations").record(iteration);
+                    return new AgentResult(answer, steps, iteration);
+                }
+
+                Matcher actionMatcher = ACTION_PATTERN.matcher(completion);
+                Matcher actionInputMatcher = ACTION_INPUT_PATTERN.matcher(completion);
+                if (!actionMatcher.find() || !actionInputMatcher.find()) {
+                    // O modelo nao seguiu o formato esperado: trata a saida como resposta final.
+                    meterRegistry.summary("react.iterations").record(iteration);
+                    return new AgentResult(completion.trim(), steps, iteration);
+                }
+
+                String thought = completion.substring(0, actionMatcher.start()).trim();
+                String action = actionMatcher.group(1).trim();
+                String actionInput = actionInputMatcher.group(1).trim();
+
+                Timer.Sample toolSample = Timer.start(meterRegistry);
+                ToolRegistry.Execution exec = toolRegistry.execute(action, actionInput);
+                toolSample.stop(meterRegistry.timer("react.tool",
+                        "tool", action,
+                        "outcome", exec.isError() ? "error" : "success"));
+                steps.add(new AgentStep(thought, action, actionInput, exec.output(), exec.isError()));
+
+                scratchpad.append(' ')
+                        .append(completion)
+                        .append("\nObservation: ").append(exec.output())
+                        .append("\nThought:");
             }
 
-            Matcher actionMatcher = ACTION_PATTERN.matcher(completion);
-            Matcher actionInputMatcher = ACTION_INPUT_PATTERN.matcher(completion);
-            if (!actionMatcher.find() || !actionInputMatcher.find()) {
-                // O modelo nao seguiu o formato esperado: trata a saida como resposta final.
-                return new AgentResult(completion.trim(), steps, iteration);
-            }
-
-            String thought = completion.substring(0, actionMatcher.start()).trim();
-            String action = actionMatcher.group(1).trim();
-            String actionInput = actionInputMatcher.group(1).trim();
-
-            ToolRegistry.Execution exec = toolRegistry.execute(action, actionInput);
-            steps.add(new AgentStep(thought, action, actionInput, exec.output(), exec.isError()));
-
-            scratchpad.append(' ')
-                    .append(completion)
-                    .append("\nObservation: ").append(exec.output())
-                    .append("\nThought:");
+            outcome = "iteration_limit";
+            meterRegistry.summary("react.iterations").record(maxIterations);
+            return new AgentResult(
+                    "Limite de iteracoes (" + maxIterations + ") atingido sem resposta final.",
+                    steps,
+                    maxIterations);
+        } catch (RuntimeException e) {
+            outcome = "error";
+            meterRegistry.counter("react.errors").increment();
+            throw e;
+        } finally {
+            totalSample.stop(meterRegistry.timer("react.run", "outcome", outcome));
         }
-
-        return new AgentResult(
-                "Limite de iteracoes (" + maxIterations + ") atingido sem resposta final.",
-                steps,
-                maxIterations);
     }
 
     private String buildPrompt(String question, String scratchpad) {
