@@ -1,0 +1,57 @@
+# Clima (get_weather)
+Qual o clima em Fortaleza?
+Qual a temperatura em São Paulo agora?
+Como está o tempo em Recife?
+Está chovendo em Manaus?
+Qual o clima em Salvador?
+Quantos graus está fazendo em Belo Horizonte?
+Como está o tempo em Curitiba hoje?
+Qual a previsão do tempo para Brasília?
+Está fazendo frio em Porto Alegre?
+Qual o clima em Lisboa?
+Como está o tempo em Nova York?
+Qual a temperatura em Tóquio?
+Está ensolarado em Natal?
+
+# Calculadora (calculate)
+Quanto é (12 + 7) * 3?
+Quanto é 25 * 4 - 10?
+Quanto é (100 - 40) / 3?
+Quanto é 2 + 3 * 4?
+Quanto é -10 + 5?
+Quanto é 9 * (3 + 2) - 7?
+Quanto é 144 / 12?
+Quanto é (8 + 2) * (3 - 1)?
+Quanto é 7.5 + 2.3?
+Quanto é 1000 / (4 * 5)?
+Quanto é 3 * 3 * 3?
+Quanto é (50 - 20) / (2 + 3)?
+Quanto é 18 + 24 - 6?
+
+# Câmbio (convert_currency)
+Converta 100 dólares em reais.
+Quanto é 50 euros em reais?
+Converta 200 reais em dólares.
+Quanto vale 1000 reais em euros?
+Converta 75 dólares em euros.
+Quanto é 500 euros em dólares?
+Converta 30 reais em dólares.
+Quanto vale 250 dólares em reais?
+Converta 10 euros em reais.
+Quanto é 1500 reais em dólares?
+Converta 60 dólares em reais.
+Quanto vale 400 euros em reais?
+
+# Conhecimento geral (sem ferramenta)
+Quem descobriu o Brasil?
+Qual é a capital da França?
+Quem escreveu Dom Casmurro?
+Em que ano começou a Segunda Guerra Mundial?
+Qual é o maior planeta do sistema solar?
+Quantos continentes existem?
+Quem pintou a Mona Lisa?
+Qual é o rio mais longo do mundo?
+O que é fotossíntese?
+Quem foi Albert Einstein?
+Qual é a fórmula química da água?
+Quantos ossos tem o corpo humano adulto?
