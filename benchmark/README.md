@@ -43,6 +43,7 @@ repositorio:
 
 ```bash
 cd function-calling-demo
+export ANTHROPIC_API_KEY="sua-chave"   # obrigatorio: nao tem mais modo mock
 SERVER_PORT=8081 mvn spring-boot:run
 ```
 
@@ -69,20 +70,22 @@ O relatorio Markdown e' salvo em `benchmark/results/comparison.md` (a pasta
 
 ## Dois modos de comparacao
 
-- **Estrutural (padrao, `llm.provider=mock` no function-calling-demo e no
-  react-agent)**: nao precisa de chave de API. Compara numero de iteracoes e
-  ferramentas/acoes escolhidas de forma deterministica — util para discutir as
-  diferencas de protocolo entre os padroes no TCC. A secao RAG do relatorio
-  fica vazia nesse modo (veja a nota abaixo).
-- **Latencia real (`LLM_PROVIDER=anthropic` + `ANTHROPIC_API_KEY` nas 3 apps)**:
-  mede o custo real de rede/tokens de cada padrao, incluindo o overhead de
-  parsing por regex do ReAct vs. o `tool_use` nativo do Function Calling.
+O `function-calling-demo` e o `rag-spring-demo` nao tem modo mock: as duas
+sempre chamam a Messages API real da Anthropic, entao exigem
+`ANTHROPIC_API_KEY` definido no processo (senao os endpoints respondem 500 e o
+script pula essas perguntas, avisando no console). Ja o `react-agent` ainda
+tem `llm.provider=mock` (padrao, sem chave).
 
-> **Nota sobre o RAG:** diferente do function-calling-demo e do react-agent, o
-> `rag-spring-demo` nao tem modo mock — o `RagService` sempre chama a API real
-> da Anthropic via `AnthropicClient`. Rodar a secao RAG do harness exige
-> `ANTHROPIC_API_KEY` definido nesse processo (senao o `/ask` responde 500 e o
-> script pula essas perguntas, avisando no console).
+- **Latencia real (recomendado)**: suba as 3 com `ANTHROPIC_API_KEY` definido
+  e, no react-agent, tambem `LLM_PROVIDER=anthropic`. Mede o custo real de
+  rede/tokens de cada padrao, incluindo o overhead de parsing por regex do
+  ReAct vs. o `tool_use` nativo do Function Calling — e' o modo apples-to-apples
+  para comparar latencia entre os 3.
+- **Estrutural, so no react-agent (`llm.provider=mock`, sem chave)**: util para
+  inspecionar rapido e de graca o numero de acoes/steps do ReAct de forma
+  deterministica. Como o function-calling-demo continua pagando latencia de
+  rede real, a coluna de latencia da comparacao deixa de ser apples-to-apples
+  nesse modo — use so para olhar iteracoes/acoes escolhidas, nao latencia.
 
 ## Parametros do script
 

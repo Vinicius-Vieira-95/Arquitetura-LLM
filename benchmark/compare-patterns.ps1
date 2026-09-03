@@ -11,7 +11,7 @@
     definindo SERVER_PORT antes de iniciar. A partir da raiz do repositorio:
 
         cd function-calling-demo
-        $env:SERVER_PORT = "8081"; mvn spring-boot:run
+        $env:ANTHROPIC_API_KEY = "sua-chave"; $env:SERVER_PORT = "8081"; mvn spring-boot:run
 
         cd react-agent
         $env:SERVER_PORT = "8082"; ./mvnw spring-boot:run
@@ -19,11 +19,16 @@
         cd rag-spring-demo
         $env:SERVER_PORT = "8083"; mvn spring-boot:run
 
-    Por padrao as 3 rodam com llm.provider=mock (sem chave de API), o que da
-    uma comparacao ESTRUTURAL (numero de iteracoes, ferramentas escolhidas,
-    determinismo) com latencia de rede desprezivel. Para uma comparacao de
-    LATENCIA REAL, suba as 3 com LLM_PROVIDER=anthropic e ANTHROPIC_API_KEY
-    definidos.
+    O function-calling-demo nao tem mais modo mock: ele sempre chama a
+    Messages API real da Anthropic, entao exige ANTHROPIC_API_KEY (e
+    opcionalmente ANTHROPIC_MODEL) definidos antes de subir. O react-agent
+    ainda tem llm.provider=mock (padrao, sem chave) para uma comparacao
+    ESTRUTURAL rapida (numero de iteracoes, ferramentas/acoes escolhidas,
+    determinismo) — mas nesse caso a comparacao de latencia entre os dois
+    deixa de ser apples-to-apples, pois so o function-calling-demo estaria
+    pagando latencia de rede real. Para uma comparacao de LATENCIA REAL,
+    suba as 2 com ANTHROPIC_API_KEY definido e, no react-agent, tambem
+    LLM_PROVIDER=anthropic.
 
     Depois, na raiz do repositorio:
 

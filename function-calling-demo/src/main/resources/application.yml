@@ -4,8 +4,6 @@ server:
   port: ${SERVER_PORT:8080}
 
 llm:
-  # Provedor do modelo: "mock" (autocontido, sem chave) ou "anthropic" (API real).
-  provider: ${LLM_PROVIDER:mock}
   # Limite de idas ao modelo por conversa (protege contra loops).
   max-iterations: 5
 

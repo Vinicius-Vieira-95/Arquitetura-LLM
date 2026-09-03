@@ -1,8 +1,8 @@
 package br.uece.functioncalling;
 
-import br.uece.functioncalling.llm.MockLlmClient;
 import br.uece.functioncalling.service.ChatResult;
 import br.uece.functioncalling.service.ChatService;
+import br.uece.functioncalling.support.FakeLlmClient;
 import br.uece.functioncalling.tool.CalculatorTool;
 import br.uece.functioncalling.tool.CurrencyTool;
 import br.uece.functioncalling.tool.ToolRegistry;
@@ -18,7 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Testa o ciclo completo de Function Calling usando o MockLlmClient, sem Spring:
+ * Testa o ciclo completo de Function Calling usando o FakeLlmClient (duplo de
+ * teste, sem chamar a API real da Anthropic), sem Spring:
  * pergunta -> tool_use -> execucao -> tool_result -> resposta final.
  */
 class ChatServiceTest {
@@ -29,7 +30,7 @@ class ChatServiceTest {
     void setUp() {
         ToolRegistry registry = new ToolRegistry(
                 List.of(new WeatherTool(), new CalculatorTool(), new CurrencyTool()));
-        chatService = new ChatService(new MockLlmClient(), registry, new SimpleMeterRegistry(), 5);
+        chatService = new ChatService(new FakeLlmClient(), registry, new SimpleMeterRegistry(), 5);
     }
 
     @Test

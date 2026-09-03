@@ -10,9 +10,8 @@ import java.util.List;
  * disponiveis e devolve a proxima mensagem do ASSISTANT — que pode conter
  * texto final ou um ou mais blocos tool_use.
  *
- * Duas implementacoes: {@link AnthropicLlmClient} (API real) e
- * {@link MockLlmClient} (deterministica, sem chave). O orquestrador
- * ({@code ChatService}) nao sabe qual esta em uso.
+ * Implementacao real: {@link AnthropicLlmClient}, que chama a Messages API
+ * da Anthropic. O orquestrador ({@code ChatService}) nao conhece esse detalhe.
  */
 public interface LlmClient {
 

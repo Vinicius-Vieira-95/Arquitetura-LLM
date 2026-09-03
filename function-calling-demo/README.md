@@ -1,11 +1,8 @@
 # Function Calling Demo (Spring Boot)
 
-Projeto didático que implementa os **princípios de Function Calling** (tool use) de ponta a ponta em Spring Boot, com dois modos de execução:
+Projeto didático que implementa os **princípios de Function Calling** (tool use) de ponta a ponta em Spring Boot, com chamadas reais à Messages API da Anthropic e ferramentas que consultam APIs públicas de verdade (clima via Open-Meteo, câmbio via Frankfurter).
 
-- **`mock`** — modelo simulado e determinístico, roda sem chave de API;
-- **`anthropic`** — chamadas reais à Messages API da Anthropic.
-
-O orquestrador (`ChatService`) é idêntico nos dois modos: ele não sabe qual implementação de modelo está por trás. Isso é justamente o que se quer demonstrar — o padrão independe do provedor.
+O orquestrador (`ChatService`) não conhece detalhes da implementação do modelo (`LlmClient`) nem das ferramentas específicas — apenas as abstrações. Isso é justamente o que se quer demonstrar — o padrão independe do provedor.
 
 ---
 
@@ -35,7 +32,7 @@ Usuário → [ChatService] → Modelo
 |--------|---------|-------|
 | Modelo de domínio | `Message`, `ContentBlock` (`Text` / `ToolUse` / `ToolResult`), `Role`, `ToolSpec` | Representação neutra da conversa, independente do provedor |
 | Ferramentas | `Tool`, `ToolRegistry`, `WeatherTool`, `CalculatorTool`, `CurrencyTool` | Funções executáveis + suas especificações publicadas ao modelo |
-| Modelo (LLM) | `LlmClient`, `MockLlmClient`, `AnthropicLlmClient` | Abstração do modelo com duas implementações |
+| Modelo (LLM) | `LlmClient`, `AnthropicLlmClient` | Abstração do modelo e sua implementação real (Messages API) |
 | Orquestração | `ChatService` | O *agentic loop* de Function Calling |
 | Web | `ChatController`, DTOs | Endpoint REST |
 
@@ -45,27 +42,18 @@ Adicionar uma ferramenta nova é só criar uma classe `@Component` que implement
 
 ## Como rodar
 
-Requisitos: **JDK 21** e **Maven**.
-
-### Modo mock (sem chave)
-
-```bash
-mvn spring-boot:run
-```
-
-O provedor padrão é `mock`. Para ver o ciclo pelo console durante o startup:
-
-```bash
-DEMO_RUN=true mvn spring-boot:run
-```
-
-### Modo Anthropic (API real)
+Requisitos: **JDK 21+**, **Maven** e uma chave de API da Anthropic.
 
 ```bash
 export ANTHROPIC_API_KEY="sua-chave"
-export LLM_PROVIDER=anthropic
 export ANTHROPIC_MODEL=claude-sonnet-5   # ou outro modelo a que você tenha acesso
 mvn spring-boot:run
+```
+
+Para ver o ciclo pelo console durante o startup:
+
+```bash
+DEMO_RUN=true mvn spring-boot:run
 ```
 
 ### Testes
@@ -113,9 +101,8 @@ Outras perguntas de exemplo:
 
 | Propriedade | Env | Padrão | Descrição |
 |-------------|-----|--------|-----------|
-| `llm.provider` | `LLM_PROVIDER` | `mock` | `mock` ou `anthropic` |
 | `llm.max-iterations` | — | `5` | Limite de idas ao modelo por conversa |
-| `anthropic.api-key` | `ANTHROPIC_API_KEY` | — | Chave da API (não versione!) |
+| `anthropic.api-key` | `ANTHROPIC_API_KEY` | — | Chave da API (obrigatória, não versione!) |
 | `anthropic.model` | `ANTHROPIC_MODEL` | `claude-sonnet-5` | Modelo usado |
 | `demo.run-on-startup` | `DEMO_RUN` | `false` | Roda exemplos no console |
 | `server.port` | `SERVER_PORT` | `8080` | Porta HTTP (util para rodar as 3 demos do repo ao mesmo tempo) |

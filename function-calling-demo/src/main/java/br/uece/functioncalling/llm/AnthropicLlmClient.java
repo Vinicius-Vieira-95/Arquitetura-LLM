@@ -7,7 +7,6 @@ import br.uece.functioncalling.model.ToolSpec;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -24,11 +23,8 @@ import java.util.Map;
  *  - traduzir o historico interno ({@link Message}) para o formato de wire da API;
  *  - publicar as {@link ToolSpec} no parametro "tools";
  *  - interpretar a resposta (blocos text e tool_use) de volta para o modelo interno.
- *
- * Ativa quando llm.provider=anthropic.
  */
 @Component
-@ConditionalOnProperty(name = "llm.provider", havingValue = "anthropic")
 public class AnthropicLlmClient implements LlmClient {
 
     private final RestClient restClient;
@@ -60,7 +56,7 @@ public class AnthropicLlmClient implements LlmClient {
     public Message complete(List<Message> history, List<ToolSpec> tools) {
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException(
-                    "anthropic.api-key nao configurada. Defina ANTHROPIC_API_KEY ou use llm.provider=mock.");
+                    "anthropic.api-key nao configurada. Defina a variavel de ambiente ANTHROPIC_API_KEY.");
         }
 
         Map<String, Object> body = new LinkedHashMap<>();

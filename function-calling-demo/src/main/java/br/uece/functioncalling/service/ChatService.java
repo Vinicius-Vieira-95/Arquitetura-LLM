@@ -23,7 +23,7 @@ import java.util.List;
  *      ou ate atingir o limite de iteracoes.
  *
  * Note que esta classe nao conhece a implementacao concreta do modelo
- * (mock ou Anthropic) nem as ferramentas especificas — apenas as abstracoes.
+ * nem as ferramentas especificas — apenas as abstracoes.
  */
 @Service
 public class ChatService {

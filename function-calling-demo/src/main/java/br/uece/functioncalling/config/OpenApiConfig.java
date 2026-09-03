@@ -15,7 +15,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Function Calling Demo API")
-                        .description("Demonstracao dos principios de Function Calling em Spring Boot (Anthropic real + mock).")
+                        .description("Demonstracao dos principios de Function Calling em Spring Boot, com chamadas reais a Messages API da Anthropic.")
                         .version("1.0.0")
                         .contact(new Contact().name("UECE")));
     }
