@@ -1,11 +1,8 @@
 # React Agent Demo (Spring Boot)
 
-Projeto didático que implementa os **princípios do padrão ReAct** (Reasoning + Acting, Yao et al. 2022) de ponta a ponta em Spring Boot, com dois modos de execução:
+Projeto didático que implementa os **princípios do padrão ReAct** (Reasoning + Acting, Yao et al. 2022) de ponta a ponta em Spring Boot, com chamadas reais à Messages API da Anthropic e ferramentas que consultam APIs públicas reais (Open-Meteo para clima, Frankfurter para câmbio).
 
-- **`mock`** — modelo simulado e determinístico, roda sem chave de API;
-- **`anthropic`** — chamadas reais à Messages API da Anthropic.
-
-O orquestrador (`ReActAgentService`) é idêntico nos dois modos: ele não sabe qual implementação de modelo está por trás — só sabe pedir a continuação de um texto e parsear o resultado.
+O orquestrador (`ReActAgentService`) não sabe qual implementação de modelo está por trás — só sabe pedir a continuação de um texto e parsear o resultado.
 
 ---
 
@@ -48,7 +45,7 @@ A Messages API é orientada a chat e não aceita mais *prefill* no último turno
 | Camada | Classes | Papel |
 |--------|---------|-------|
 | Ferramentas | `Tool`, `ToolRegistry`, `WeatherTool`, `CalculatorTool`, `CurrencyTool` | Funções executáveis; cada uma interpreta seu próprio Action Input em texto livre |
-| Modelo (LLM) | `LlmClient`, `MockLlmClient`, `AnthropicLlmClient` | Abstração de "continuar um texto", com duas implementações |
+| Modelo (LLM) | `LlmClient`, `AnthropicLlmClient` | Abstração de "continuar um texto"; implementação real via Messages API |
 | Orquestração | `ReActAgentService`, `AgentStep`, `AgentResult` | O laço Thought → Action → Observation → ... → Final Answer |
 | Web | `AgentController`, DTOs | Endpoint REST |
 
@@ -58,27 +55,18 @@ Adicionar uma ferramenta nova é só criar uma classe `@Component` que implement
 
 ## Como rodar
 
-Requisitos: **JDK 25** e Maven (ou o `mvnw` incluso).
-
-### Modo mock (sem chave)
-
-```bash
-./mvnw spring-boot:run
-```
-
-O provedor padrão é `mock`. Para ver o ciclo pelo console durante o startup:
-
-```bash
-DEMO_RUN=true ./mvnw spring-boot:run
-```
-
-### Modo Anthropic (API real)
+Requisitos: **JDK 25**, Maven (ou o `mvnw` incluso) e uma `ANTHROPIC_API_KEY`.
 
 ```bash
 export ANTHROPIC_API_KEY="sua-chave"
-export LLM_PROVIDER=anthropic
 export ANTHROPIC_MODEL=claude-sonnet-5   # ou outro modelo a que você tenha acesso
 ./mvnw spring-boot:run
+```
+
+Para ver o ciclo pelo console durante o startup (faz chamadas reais à API):
+
+```bash
+DEMO_RUN=true ./mvnw spring-boot:run
 ```
 
 ### Testes
@@ -136,7 +124,6 @@ Outras perguntas de exemplo:
 
 | Propriedade | Env | Padrão | Descrição |
 |-------------|-----|--------|-----------|
-| `llm.provider` | `LLM_PROVIDER` | `mock` | `mock` ou `anthropic` |
 | `react.max-iterations` | — | `5` | Limite de idas ao modelo por pergunta |
 | `anthropic.api-key` | `ANTHROPIC_API_KEY` | — | Chave da API (não versione!) |
 | `anthropic.model` | `ANTHROPIC_MODEL` | `claude-sonnet-5` | Modelo usado |

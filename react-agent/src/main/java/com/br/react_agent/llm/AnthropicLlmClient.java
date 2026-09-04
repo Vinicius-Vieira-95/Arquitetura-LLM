@@ -1,7 +1,6 @@
 package com.br.react_agent.llm;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -21,10 +20,9 @@ import java.util.Map;
  * a continuacao do texto — como se estivesse preenchendo o proximo trecho da
  * transcricao a partir do ponto em que ela para.
  *
- * Ativa quando llm.provider=anthropic.
+ * Unica implementacao de {@link LlmClient}: requer ANTHROPIC_API_KEY configurada.
  */
 @Component
-@ConditionalOnProperty(name = "llm.provider", havingValue = "anthropic")
 public class AnthropicLlmClient implements LlmClient {
 
     private final RestClient restClient;

@@ -1,6 +1,6 @@
 package com.br.react_agent.agent;
 
-import com.br.react_agent.llm.MockLlmClient;
+import com.br.react_agent.llm.FakeLlmClient;
 import com.br.react_agent.tool.CalculatorTool;
 import com.br.react_agent.tool.CurrencyTool;
 import com.br.react_agent.tool.ToolRegistry;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Testa o ciclo completo ReAct usando o MockLlmClient, sem Spring:
+ * Testa o ciclo completo ReAct usando o FakeLlmClient (dublê determinístico de teste), sem Spring:
  * pergunta -> Thought/Action/Action Input -> execucao real da ferramenta ->
  * Observation -> Final Answer. Espelha o ChatServiceTest do projeto irmao
  * function-calling-demo, trocando apenas o formato de interacao com o modelo.
@@ -29,7 +29,7 @@ class ReActAgentServiceTest {
     void setUp() {
         ToolRegistry registry = new ToolRegistry(
                 List.of(new WeatherTool(), new CalculatorTool(), new CurrencyTool()));
-        agentService = new ReActAgentService(new MockLlmClient(), registry, new SimpleMeterRegistry(), 5);
+        agentService = new ReActAgentService(new FakeLlmClient(), registry, new SimpleMeterRegistry(), 5);
     }
 
     @Test

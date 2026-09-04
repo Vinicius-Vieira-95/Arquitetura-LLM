@@ -7,10 +7,6 @@ server:
   # (cada uma em uma porta), por exemplo para o harness de comparacao em benchmark/.
   port: ${SERVER_PORT:8080}
 
-llm:
-  # Provedor do modelo: "mock" (autocontido, sem chave) ou "anthropic" (API real).
-  provider: ${LLM_PROVIDER:mock}
-
 react:
   # Limite de idas ao modelo por pergunta (protege contra loops do ciclo ReAct).
   max-iterations: 5
