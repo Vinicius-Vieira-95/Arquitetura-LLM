@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: rag-react-agent
+
+server:
+  # Configuravel para permitir rodar as demos do repositorio simultaneamente
+  # (cada uma em uma porta), por exemplo para o harness de comparacao em benchmark/.
+  port: ${SERVER_PORT:8080}
+
+react:
+  # Limite de idas ao modelo por pergunta (protege contra loops do ciclo ReAct).
+  max-iterations: 5
+
+rag:
+  top-k: 3                       # quantos chunks recuperar no RETRIEVE inicial
+  chunk-max-chars: 600           # tamanho-alvo de cada chunk (usado pelo Chunker de rag-spring-demo)
+
+anthropic:
+  # Chave lida da variavel de ambiente ANTHROPIC_API_KEY (nao versione a chave!).
+  api-key: ${ANTHROPIC_API_KEY:}
+  model: ${ANTHROPIC_MODEL:claude-sonnet-5}
+  max-tokens: 1024
+  base-url: https://api.anthropic.com
+  version: "2023-06-01"
+
+demo:
+  # Se true, roda exemplos no console durante o startup.
+  run-on-startup: ${DEMO_RUN:false}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info
+
+logging:
+  level:
+    com.example.ragreact: INFO
