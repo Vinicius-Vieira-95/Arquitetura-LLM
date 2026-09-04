@@ -4,6 +4,7 @@ import br.uece.llm.llm.LlmClient;
 import br.uece.llm.model.ContentBlock;
 import br.uece.llm.model.Message;
 import br.uece.llm.model.ToolSpec;
+import br.uece.llm.tool.ToolCallTrace;
 import br.uece.llm.tool.ToolRegistry;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;

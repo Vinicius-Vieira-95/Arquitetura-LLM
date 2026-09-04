@@ -64,8 +64,36 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <!-- rag-function-calling e rag-react-agent dependem deste jar para reusar
+                         Embedder/InMemoryVectorStore/CorpusIndexer. Se application.yml fosse
+                         empacotado aqui, ele entraria no classpath desses modulos e colidiria
+                         com o application.yml de cada um (o Spring resolve "classpath:/application.yml"
+                         para um unico arquivo — nao faz merge —, e a ordem de qual jar "ganha" nao e'
+                         garantida). Ja foi observado na pratica: anthropic.model e anthropic.base-url
+                         deste arquivo vazando para rag-react-agent e quebrando a chamada a Anthropic
+                         (URL final duplicada, 404). "mvn spring-boot:run" continua funcionando normalmente
+                         (roda direto de target/classes, nao do jar empacotado). -->
+                    <excludes>
+                        <exclude>application.yml</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- Sem isto, "repackage" substitui o jar normal pelo fat jar executavel,
+                         e rag-function-calling/rag-react-agent (que dependem deste modulo para
+                         reusar Embedder/InMemoryVectorStore/CorpusIndexer) nao conseguem enxergar
+                         as classes, ja que elas ficariam dentro de BOOT-INF/classes. Com o
+                         classifier, "mvn install" continua publicando o jar normal como
+                         artefato principal (importavel) e o executavel vai como
+                         rag-spring-demo-*-exec.jar. -->
+                    <classifier>exec</classifier>
+                </configuration>
             </plugin>
         </plugins>
     </build>

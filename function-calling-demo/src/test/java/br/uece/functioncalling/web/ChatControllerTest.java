@@ -2,7 +2,7 @@ package br.uece.functioncalling.web;
 
 import br.uece.functioncalling.service.ChatResult;
 import br.uece.functioncalling.service.ChatService;
-import br.uece.functioncalling.service.ToolCallTrace;
+import br.uece.llm.tool.ToolCallTrace;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,5 +1,7 @@
 package br.uece.functioncalling.service;
 
+import br.uece.llm.tool.ToolCallTrace;
+
 import java.util.List;
 
 /**

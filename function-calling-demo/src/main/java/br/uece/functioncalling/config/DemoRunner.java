@@ -2,7 +2,7 @@ package br.uece.functioncalling.config;
 
 import br.uece.functioncalling.service.ChatResult;
 import br.uece.functioncalling.service.ChatService;
-import br.uece.functioncalling.service.ToolCallTrace;
+import br.uece.llm.tool.ToolCallTrace;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;

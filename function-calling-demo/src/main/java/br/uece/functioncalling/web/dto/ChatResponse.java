@@ -1,7 +1,7 @@
 package br.uece.functioncalling.web.dto;
 
 import br.uece.functioncalling.service.ChatResult;
-import br.uece.functioncalling.service.ToolCallTrace;
+import br.uece.llm.tool.ToolCallTrace;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
