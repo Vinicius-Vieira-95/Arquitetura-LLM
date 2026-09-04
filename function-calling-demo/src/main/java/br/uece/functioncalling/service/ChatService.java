@@ -1,10 +1,10 @@
 package br.uece.functioncalling.service;
 
-import br.uece.functioncalling.llm.LlmClient;
-import br.uece.functioncalling.model.ContentBlock;
-import br.uece.functioncalling.model.Message;
-import br.uece.functioncalling.model.ToolSpec;
-import br.uece.functioncalling.tool.ToolRegistry;
+import br.uece.llm.llm.LlmClient;
+import br.uece.llm.model.ContentBlock;
+import br.uece.llm.model.Message;
+import br.uece.llm.model.ToolSpec;
+import br.uece.llm.tool.ToolRegistry;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.springframework.beans.factory.annotation.Value;
